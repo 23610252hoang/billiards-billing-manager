@@ -1,0 +1,16 @@
+[project]
+name = "billiards-billing-manager"
+version = "0.1.0"
+description = "A Tkinter and SQLite desktop app for billiards table billing."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+billiards-manager = "billiards_manager.app:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
