@@ -118,7 +118,7 @@ class Database:
             """
         )
         defaults = {
-            "club_name": "Billiards Club",
+            "club_name": "ビリヤードクラブ",
             "table_count": "8",
             "rate_per_hour": "60000",
             "point_rate": "10000",
@@ -129,9 +129,9 @@ class Database:
                 (key, value),
             )
         if not self.list_services():
-            self.add_service("Water", 10000)
-            self.add_service("Soft drink", 15000)
-            self.add_service("Cue rental", 20000)
+            self.add_service("ミネラルウォーター", 10000)
+            self.add_service("ソフトドリンク", 15000)
+            self.add_service("キュー貸出", 20000)
         self.conn.commit()
 
     def setting(self, key: str) -> str:
@@ -172,7 +172,7 @@ class Database:
             (table_id,),
         ).fetchone()
         if existing:
-            raise ValueError(f"Table {table_id} already has an active session.")
+            raise ValueError(f"台番号 {table_id} はすでに利用中です。")
 
         customer_name = None
         if customer_id:
@@ -205,7 +205,7 @@ class Database:
         session = self.get_session(session_id)
         service = self.conn.execute("SELECT * FROM services WHERE id = ?", (service_id,)).fetchone()
         if session is None or service is None:
-            raise ValueError("Invalid session or service.")
+            raise ValueError("セッションまたはサービスが正しくありません。")
         services = json.loads(session["services"] or "[]")
         services.append(
             {
@@ -226,13 +226,13 @@ class Database:
         self,
         session_id: int,
         discount: float = 0,
-        payment_method: str = "cash",
+        payment_method: str = "現金",
     ) -> Bill:
         session = self.get_session(session_id)
         if session is None:
-            raise ValueError("Session not found.")
+            raise ValueError("セッションが見つかりません。")
         if session["end_time"] is not None:
-            raise ValueError("Session is already closed.")
+            raise ValueError("このセッションはすでに会計済みです。")
 
         end_time = datetime.now()
         start_time = datetime.fromisoformat(session["start_time"])
@@ -271,7 +271,7 @@ class Database:
     def bill_for_session(self, session_id: int) -> Bill:
         session = self.get_session(session_id)
         if session is None:
-            raise ValueError("Session not found.")
+            raise ValueError("セッションが見つかりません。")
         return Bill(
             session_id=int(session["id"]),
             table_id=int(session["table_id"]),
@@ -339,31 +339,31 @@ def receipt_text(club_name: str, bill: Bill) -> str:
     lines = [
         club_name,
         "=" * 34,
-        f"RECEIPT #{bill.session_id} - TABLE {bill.table_id}",
-        f"Customer: {bill.customer_name or 'Walk-in customer'}",
-        f"Start: {bill.started_at}",
-        f"End:   {bill.ended_at}",
-        f"Time:  {minutes // 60}h {minutes % 60}m",
+        f"領収書 #{bill.session_id} - 台番号 {bill.table_id}",
+        f"顧客: {bill.customer_name or '一般顧客'}",
+        f"開始: {bill.started_at}",
+        f"終了: {bill.ended_at}",
+        f"時間: {minutes // 60}時間 {minutes % 60}分",
         "-" * 34,
-        f"Table fee:   {money(bill.base_fee)}",
+        f"台利用料金:   {money(bill.base_fee)}",
     ]
     if bill.services:
-        lines.append("Services:")
+        lines.append("サービス:")
         for item in bill.services:
             lines.append(
                 f"  {item['name']} x{item['quantity']}: {money(float(item['total']))}"
             )
     else:
-        lines.append("Services: none")
+        lines.append("サービス: なし")
     lines.extend(
         [
-            f"Service fee: {money(bill.service_fee)}",
-            f"Discount:    {money(bill.discount)}",
-            f"Prepaid:     {money(bill.prepaid)}",
+            f"サービス料金: {money(bill.service_fee)}",
+            f"割引:         {money(bill.discount)}",
+            f"前払い:       {money(bill.prepaid)}",
             "=" * 34,
-            f"TOTAL:       {money(bill.final_total)}",
-            f"Payment:     {bill.payment_method}",
-            "Thank you!",
+            f"合計:         {money(bill.final_total)}",
+            f"支払方法:     {bill.payment_method}",
+            "ご利用ありがとうございました。",
         ]
     )
     return "\n".join(lines)

@@ -1,58 +1,74 @@
-# Billiards Billing Manager
+# ビリヤード店舗向け会計管理アプリ
 
-A desktop billing and operations app for a billiards club. The app was rebuilt
-as a clean portfolio version from an older local executable, with private
-business data removed.
+ビリヤード店舗の受付・会計業務を想定して作成したデスクトップアプリです。台の利用開始・終了、プレイ時間に応じた料金計算、サービス追加、顧客管理、領収書出力、日次売上確認までをローカル環境で扱えるようにしました。
 
-## Features
+過去に作成したローカル実行ファイルをもとに、採用選考で確認しやすいようにソースコードを整理し直したポートフォリオ版です。実店舗名、電話番号、実データ、生成済みレポートなどの個人情報・業務情報は含めていません。
 
-- Table session management: start, stop, and calculate play time.
-- Automatic billing based on hourly rate, player count, prepaid amount, and discount.
-- Service menu management for drinks or add-on items.
-- Customer management with points tracking.
-- Receipt export as text files.
-- Daily revenue report from the SQLite database.
-- Local-first storage using SQLite.
+## 開発背景・完成までの流れ
 
-## Tech Stack
+- ビリヤード店では、台ごとの開始時刻、終了時刻、利用人数、前払い、割引、追加注文を手作業で管理するとミスが起きやすいと考えました。
+- そこで、店舗スタッフが画面上でセッションを開始・終了するだけで料金を自動計算できる業務アプリとして設計しました。
+- 旧版では実行ファイルとして動作確認を行い、今回はGitHub提出用にデータベース設計、UI構成、README、テストを整理しました。
+- 採用担当者がすぐに確認できるよう、外部サービス不要・標準ライブラリ中心の構成にしています。
+
+## 主な機能
+
+- 台ごとのセッション開始・終了管理
+- 利用時間、時間単価、人数、前払い、割引をもとにした自動会計
+- ドリンクなどの追加サービス登録と料金加算
+- 顧客登録とポイント管理
+- 領収書のテキスト出力
+- SQLiteに保存した履歴から日次売上を集計
+- ローカル完結型のデータ保存
+
+## 使用技術
 
 - Python 3.10+
-- Tkinter desktop UI
-- SQLite database
-- Standard library only
+- Tkinter: デスクトップGUI
+- SQLite: ローカルデータベース
+- pathlib / dataclasses / json / datetime: 標準ライブラリによるデータ処理
+- Git / GitHub: バージョン管理・成果物提出
 
-## How to Run
+## アピールできるスキル
+
+- 業務フローを画面操作に落とし込む設計力
+- SQLiteのテーブル設計とCRUD処理
+- TkinterによるデスクトップUI実装
+- 料金計算、割引、前払い、追加注文などの業務ロジック実装
+- 個人情報を含まない公開用リポジトリとして整理する意識
+- 簡単なスモークテストによる動作確認
+
+## 業務的な価値
+
+- 手計算による会計ミスを減らせます。
+- 台ごとの利用状況を一覧で確認できます。
+- 領収書出力により会計履歴を残せます。
+- 日次売上をすぐ確認でき、店舗運営の振り返りに使えます。
+- 小規模店舗でも導入しやすいローカル完結型です。
+
+## 実行方法
 
 ```bash
 python run_app.py
 ```
 
-The app creates local runtime data in:
+実行すると、以下のローカルデータが自動作成されます。
 
 - `data/billiards_app.db`
 - `reports/`
 
-These generated files are ignored by Git.
+これらの生成ファイルはGit管理対象外にしています。
 
-## Project Structure
+## ディレクトリ構成
 
 ```text
 src/billiards_manager/
-  app.py       # Tkinter UI and user workflows
-  database.py  # SQLite schema and data access
-  __main__.py  # App entry point
-run_app.py     # Convenient local launcher
+  app.py       # Tkinter UIと業務操作
+  database.py  # SQLiteスキーマとデータアクセス
+  __main__.py  # アプリのエントリーポイント
+run_app.py     # ローカル実行用ランチャー
 ```
 
-## Why This Project
+## 補足
 
-This project demonstrates a practical desktop application for a real business
-workflow: tracking billiards table usage, calculating fees, saving history, and
-exporting receipts. It is intentionally small, readable, and runnable without
-external services.
-
-## Notes
-
-The old executable, real database, and generated reports are not included in
-this repository because they may contain private shop information. This repo
-contains only clean source code suitable for public review.
+旧版の実行ファイル、実データベース、生成済みレポートは公開していません。このリポジトリには、採用選考で確認していただくためのクリーンなソースコードのみを含めています。

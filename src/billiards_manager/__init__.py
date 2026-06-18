@@ -1,4 +1,4 @@
-"""Billiards Billing Manager."""
+"""ビリヤード店舗向け会計管理アプリ。"""
 
 __all__ = ["__version__"]
 

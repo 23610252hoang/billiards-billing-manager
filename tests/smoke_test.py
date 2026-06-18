@@ -7,17 +7,17 @@ from billiards_manager.database import Database, receipt_text
 def main() -> None:
     with TemporaryDirectory() as tmp:
         db = Database(Path(tmp) / "test.db")
-        customer_id = db.add_customer("Test Customer", "000-0000")
-        service_id = db.add_service("Coffee", 12000)
+        customer_id = db.add_customer("テスト顧客", "000-0000")
+        service_id = db.add_service("コーヒー", 12000)
         session_id = db.start_session(table_id=1, num_players=2, customer_id=customer_id)
         db.add_service_to_session(session_id, service_id, 2)
-        bill = db.finish_session(session_id, discount=5000, payment_method="cash")
-        text = receipt_text("Demo Billiards", bill)
+        bill = db.finish_session(session_id, discount=5000, payment_method="現金")
+        text = receipt_text("デモビリヤード", bill)
         assert bill.final_total >= 0
-        assert "Coffee" in text
-        assert "TOTAL" in text
+        assert "コーヒー" in text
+        assert "合計" in text
         db.close()
-    print("Smoke test passed")
+    print("スモークテストに成功しました")
 
 
 if __name__ == "__main__":

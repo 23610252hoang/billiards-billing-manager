@@ -11,14 +11,14 @@ from .database import REPORT_DIR, Database, money, receipt_text
 class BilliardsApp(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
-        self.title("Billiards Billing Manager")
+        self.title("ビリヤード会計管理アプリ")
         self.geometry("1080x680")
         self.minsize(960, 600)
         self.db = Database()
 
         self.table_count = tk.IntVar(value=int(self.db.setting("table_count")))
         self.rate_per_hour = tk.StringVar(value=self.db.setting("rate_per_hour"))
-        self.status_text = tk.StringVar(value="Ready")
+        self.status_text = tk.StringVar(value="準備完了")
 
         self._configure_style()
         self._build_layout()
@@ -35,7 +35,7 @@ class BilliardsApp(tk.Tk):
     def _build_layout(self) -> None:
         header = ttk.Frame(self, padding=(16, 14, 16, 8))
         header.pack(fill="x")
-        ttk.Label(header, text="Billiards Billing Manager", style="Title.TLabel").pack(side="left")
+        ttk.Label(header, text="ビリヤード会計管理アプリ", style="Title.TLabel").pack(side="left")
         ttk.Label(header, textvariable=self.status_text).pack(side="right")
 
         self.tabs = ttk.Notebook(self)
@@ -47,11 +47,11 @@ class BilliardsApp(tk.Tk):
         self.customers_tab = ttk.Frame(self.tabs, padding=12)
         self.reports_tab = ttk.Frame(self.tabs, padding=12)
 
-        self.tabs.add(self.dashboard_tab, text="Dashboard")
-        self.tabs.add(self.sessions_tab, text="Sessions")
-        self.tabs.add(self.services_tab, text="Services")
-        self.tabs.add(self.customers_tab, text="Customers")
-        self.tabs.add(self.reports_tab, text="Reports")
+        self.tabs.add(self.dashboard_tab, text="ダッシュボード")
+        self.tabs.add(self.sessions_tab, text="利用管理")
+        self.tabs.add(self.services_tab, text="サービス")
+        self.tabs.add(self.customers_tab, text="顧客")
+        self.tabs.add(self.reports_tab, text="売上レポート")
 
         self._build_dashboard()
         self._build_sessions()
@@ -66,39 +66,39 @@ class BilliardsApp(tk.Tk):
         self.today_metric = tk.StringVar()
         self.revenue_metric = tk.StringVar()
         for label, var in [
-            ("Active tables", self.active_metric),
-            ("Sessions today", self.today_metric),
-            ("Revenue today", self.revenue_metric),
+            ("利用中の台数", self.active_metric),
+            ("本日の会計数", self.today_metric),
+            ("本日の売上", self.revenue_metric),
         ]:
             card = ttk.LabelFrame(metrics, text=label, padding=12)
             card.pack(side="left", fill="x", expand=True, padx=(0, 12))
             ttk.Label(card, textvariable=var, style="Metric.TLabel").pack(anchor="w")
 
-        settings = ttk.LabelFrame(self.dashboard_tab, text="Settings", padding=12)
+        settings = ttk.LabelFrame(self.dashboard_tab, text="基本設定", padding=12)
         settings.pack(fill="x", pady=16)
-        ttk.Label(settings, text="Table count").grid(row=0, column=0, sticky="w", padx=(0, 8))
+        ttk.Label(settings, text="台数").grid(row=0, column=0, sticky="w", padx=(0, 8))
         ttk.Spinbox(settings, from_=1, to=50, textvariable=self.table_count, width=8).grid(row=0, column=1)
-        ttk.Label(settings, text="Rate per hour").grid(row=0, column=2, sticky="w", padx=(18, 8))
+        ttk.Label(settings, text="1時間あたり料金").grid(row=0, column=2, sticky="w", padx=(18, 8))
         ttk.Entry(settings, textvariable=self.rate_per_hour, width=14).grid(row=0, column=3)
-        ttk.Button(settings, text="Save settings", command=self.save_settings).grid(row=0, column=4, padx=16)
+        ttk.Button(settings, text="設定を保存", command=self.save_settings).grid(row=0, column=4, padx=16)
 
-        active_box = ttk.LabelFrame(self.dashboard_tab, text="Active Sessions", padding=8)
+        active_box = ttk.LabelFrame(self.dashboard_tab, text="利用中セッション", padding=8)
         active_box.pack(fill="both", expand=True)
         self.active_tree = self._tree(
             active_box,
             ("id", "table", "start", "players", "customer", "prepaid"),
-            ("ID", "Table", "Start", "Players", "Customer", "Prepaid"),
+            ("ID", "台番号", "開始時刻", "人数", "顧客", "前払い"),
         )
 
     def _build_sessions(self) -> None:
-        form = ttk.LabelFrame(self.sessions_tab, text="Start Session", padding=12)
+        form = ttk.LabelFrame(self.sessions_tab, text="利用開始", padding=12)
         form.pack(fill="x")
         self.start_table = tk.IntVar(value=1)
         self.start_players = tk.IntVar(value=1)
         self.start_customer = tk.StringVar()
         self.start_prepaid = tk.StringVar(value="0")
         self.start_notes = tk.StringVar()
-        labels = ["Table", "Players", "Customer ID", "Prepaid", "Notes"]
+        labels = ["台番号", "人数", "顧客ID", "前払い", "メモ"]
         variables = [
             self.start_table,
             self.start_players,
@@ -109,76 +109,76 @@ class BilliardsApp(tk.Tk):
         for index, (label, var) in enumerate(zip(labels, variables)):
             ttk.Label(form, text=label).grid(row=0, column=index * 2, sticky="w", padx=(0, 6))
             ttk.Entry(form, textvariable=var, width=14).grid(row=0, column=index * 2 + 1, padx=(0, 12))
-        ttk.Button(form, text="Start", command=self.start_session).grid(row=0, column=10)
+        ttk.Button(form, text="開始", command=self.start_session).grid(row=0, column=10)
 
-        actions = ttk.LabelFrame(self.sessions_tab, text="Close Session / Add Service", padding=12)
+        actions = ttk.LabelFrame(self.sessions_tab, text="会計・サービス追加", padding=12)
         actions.pack(fill="x", pady=12)
         self.selected_session = tk.StringVar()
         self.service_id = tk.StringVar()
         self.service_quantity = tk.IntVar(value=1)
         self.discount = tk.StringVar(value="0")
-        self.payment_method = tk.StringVar(value="cash")
+        self.payment_method = tk.StringVar(value="現金")
         for index, (label, var) in enumerate(
             [
-                ("Session ID", self.selected_session),
-                ("Service ID", self.service_id),
-                ("Qty", self.service_quantity),
-                ("Discount", self.discount),
-                ("Payment", self.payment_method),
+                ("セッションID", self.selected_session),
+                ("サービスID", self.service_id),
+                ("数量", self.service_quantity),
+                ("割引", self.discount),
+                ("支払方法", self.payment_method),
             ]
         ):
             ttk.Label(actions, text=label).grid(row=0, column=index * 2, padx=(0, 6))
             ttk.Entry(actions, textvariable=var, width=12).grid(row=0, column=index * 2 + 1, padx=(0, 12))
-        ttk.Button(actions, text="Add service", command=self.add_service_to_session).grid(row=0, column=10, padx=4)
-        ttk.Button(actions, text="Finish", command=self.finish_session).grid(row=0, column=11, padx=4)
+        ttk.Button(actions, text="サービス追加", command=self.add_service_to_session).grid(row=0, column=10, padx=4)
+        ttk.Button(actions, text="会計完了", command=self.finish_session).grid(row=0, column=11, padx=4)
 
-        history = ttk.LabelFrame(self.sessions_tab, text="Recent Sessions", padding=8)
+        history = ttk.LabelFrame(self.sessions_tab, text="最近の利用履歴", padding=8)
         history.pack(fill="both", expand=True)
         self.sessions_tree = self._tree(
             history,
             ("id", "table", "start", "end", "fee", "customer", "payment"),
-            ("ID", "Table", "Start", "End", "Total", "Customer", "Payment"),
+            ("ID", "台番号", "開始", "終了", "合計", "顧客", "支払方法"),
         )
 
     def _build_services(self) -> None:
-        form = ttk.LabelFrame(self.services_tab, text="Add Service", padding=12)
+        form = ttk.LabelFrame(self.services_tab, text="サービス追加", padding=12)
         form.pack(fill="x")
         self.new_service_name = tk.StringVar()
         self.new_service_price = tk.StringVar()
-        ttk.Label(form, text="Name").grid(row=0, column=0, padx=(0, 6))
+        ttk.Label(form, text="名称").grid(row=0, column=0, padx=(0, 6))
         ttk.Entry(form, textvariable=self.new_service_name, width=24).grid(row=0, column=1, padx=(0, 12))
-        ttk.Label(form, text="Price").grid(row=0, column=2, padx=(0, 6))
+        ttk.Label(form, text="料金").grid(row=0, column=2, padx=(0, 6))
         ttk.Entry(form, textvariable=self.new_service_price, width=16).grid(row=0, column=3, padx=(0, 12))
-        ttk.Button(form, text="Add", command=self.add_service).grid(row=0, column=4)
-        table = ttk.LabelFrame(self.services_tab, text="Services", padding=8)
+        ttk.Button(form, text="追加", command=self.add_service).grid(row=0, column=4)
+        table = ttk.LabelFrame(self.services_tab, text="サービス一覧", padding=8)
         table.pack(fill="both", expand=True, pady=12)
-        self.services_tree = self._tree(table, ("id", "name", "price"), ("ID", "Name", "Price"))
+        self.services_tree = self._tree(table, ("id", "name", "price"), ("ID", "名称", "料金"))
 
     def _build_customers(self) -> None:
-        form = ttk.LabelFrame(self.customers_tab, text="Add Customer", padding=12)
+        form = ttk.LabelFrame(self.customers_tab, text="顧客追加", padding=12)
         form.pack(fill="x")
         self.customer_name = tk.StringVar()
         self.customer_phone = tk.StringVar()
-        ttk.Label(form, text="Name").grid(row=0, column=0, padx=(0, 6))
+        ttk.Label(form, text="氏名").grid(row=0, column=0, padx=(0, 6))
         ttk.Entry(form, textvariable=self.customer_name, width=24).grid(row=0, column=1, padx=(0, 12))
-        ttk.Label(form, text="Phone").grid(row=0, column=2, padx=(0, 6))
+        ttk.Label(form, text="電話番号").grid(row=0, column=2, padx=(0, 6))
         ttk.Entry(form, textvariable=self.customer_phone, width=18).grid(row=0, column=3, padx=(0, 12))
-        ttk.Button(form, text="Add", command=self.add_customer).grid(row=0, column=4)
-        table = ttk.LabelFrame(self.customers_tab, text="Customers", padding=8)
+        ttk.Button(form, text="追加", command=self.add_customer).grid(row=0, column=4)
+        table = ttk.LabelFrame(self.customers_tab, text="顧客一覧", padding=8)
         table.pack(fill="both", expand=True, pady=12)
         self.customers_tree = self._tree(
             table,
             ("id", "name", "phone", "points", "join_date"),
-            ("ID", "Name", "Phone", "Points", "Join date"),
+            ("ID", "氏名", "電話番号", "ポイント", "登録日"),
         )
 
     def _build_reports(self) -> None:
         controls = ttk.Frame(self.reports_tab)
         controls.pack(fill="x")
         self.report_date = tk.StringVar(value=datetime.now().date().isoformat())
-        ttk.Label(controls, text="Date").pack(side="left")
+        ttk.Label(controls, text="日付").pack(side="left")
         ttk.Entry(controls, textvariable=self.report_date, width=16).pack(side="left", padx=8)
-        ttk.Button(controls, text="Refresh", command=self.refresh_reports).pack(side="left")
+        ttk.Button(controls, text="更新", command=self.refresh_reports).pack(side="left")
         self.report_text = tk.Text(self.reports_tab, height=18, wrap="word")
         self.report_text.pack(fill="both", expand=True, pady=12)
 
@@ -197,7 +197,7 @@ class BilliardsApp(tk.Tk):
     def save_settings(self) -> None:
         self.db.update_setting("table_count", str(self.table_count.get()))
         self.db.update_setting("rate_per_hour", self.rate_per_hour.get())
-        self.status_text.set("Settings saved")
+        self.status_text.set("設定を保存しました")
         self.refresh_all()
 
     def start_session(self) -> None:
@@ -210,10 +210,10 @@ class BilliardsApp(tk.Tk):
                 prepaid=float(self.start_prepaid.get() or 0),
                 notes=self.start_notes.get(),
             )
-            self.status_text.set(f"Started session #{session_id}")
+            self.status_text.set(f"セッション #{session_id} を開始しました")
             self.refresh_all()
         except Exception as exc:
-            messagebox.showerror("Cannot start session", str(exc))
+            messagebox.showerror("開始できません", str(exc))
 
     def add_service_to_session(self) -> None:
         try:
@@ -222,26 +222,26 @@ class BilliardsApp(tk.Tk):
                 int(self.service_id.get()),
                 self.service_quantity.get(),
             )
-            self.status_text.set("Service added")
+            self.status_text.set("サービスを追加しました")
             self.refresh_all()
         except Exception as exc:
-            messagebox.showerror("Cannot add service", str(exc))
+            messagebox.showerror("サービスを追加できません", str(exc))
 
     def finish_session(self) -> None:
         try:
             bill = self.db.finish_session(
                 int(self.selected_session.get()),
                 discount=float(self.discount.get() or 0),
-                payment_method=self.payment_method.get() or "cash",
+                payment_method=self.payment_method.get() or "現金",
             )
             REPORT_DIR.mkdir(parents=True, exist_ok=True)
             path = REPORT_DIR / f"receipt_{bill.session_id}_{datetime.now():%Y%m%d_%H%M%S}.txt"
             path.write_text(receipt_text(self.db.setting("club_name"), bill), encoding="utf-8")
-            self.status_text.set(f"Finished session #{bill.session_id}; receipt saved")
-            messagebox.showinfo("Receipt saved", str(path))
+            self.status_text.set(f"セッション #{bill.session_id} を会計完了し、領収書を保存しました")
+            messagebox.showinfo("領収書を保存しました", str(path))
             self.refresh_all()
         except Exception as exc:
-            messagebox.showerror("Cannot finish session", str(exc))
+            messagebox.showerror("会計完了できません", str(exc))
 
     def add_service(self) -> None:
         try:
@@ -250,7 +250,7 @@ class BilliardsApp(tk.Tk):
             self.new_service_price.set("")
             self.refresh_all()
         except Exception as exc:
-            messagebox.showerror("Cannot add service", str(exc))
+            messagebox.showerror("サービスを追加できません", str(exc))
 
     def add_customer(self) -> None:
         try:
@@ -259,7 +259,7 @@ class BilliardsApp(tk.Tk):
             self.customer_phone.set("")
             self.refresh_all()
         except Exception as exc:
-            messagebox.showerror("Cannot add customer", str(exc))
+            messagebox.showerror("顧客を追加できません", str(exc))
 
     def refresh_all(self) -> None:
         self.refresh_active()
@@ -280,7 +280,7 @@ class BilliardsApp(tk.Tk):
                     row["table_id"],
                     row["start_time"],
                     row["num_players"],
-                    row["customer_name"] or "Walk-in",
+                    row["customer_name"] or "一般顧客",
                     money(float(row["prepaid"] or 0)),
                 ),
             )
@@ -299,9 +299,9 @@ class BilliardsApp(tk.Tk):
                     row["id"],
                     row["table_id"],
                     row["start_time"],
-                    row["end_time"] or "active",
+                    row["end_time"] or "利用中",
                     money(float(row["final_total"] or 0)),
-                    row["customer_name"] or "Walk-in",
+                    row["customer_name"] or "一般顧客",
                     row["payment_method"] or "",
                 ),
             )
@@ -323,13 +323,13 @@ class BilliardsApp(tk.Tk):
     def refresh_reports(self) -> None:
         report = self.db.daily_report(self.report_date.get())
         lines = [
-            f"Daily report: {self.report_date.get()}",
+            f"日次売上レポート: {self.report_date.get()}",
             "=" * 32,
-            f"Sessions:        {int(report['session_count'])}",
-            f"Table revenue:   {money(float(report['table_revenue']))}",
-            f"Service revenue: {money(float(report['service_revenue']))}",
-            f"Discounts:       {money(float(report['discounts']))}",
-            f"Final revenue:   {money(float(report['final_revenue']))}",
+            f"会計数:          {int(report['session_count'])}",
+            f"台利用売上:      {money(float(report['table_revenue']))}",
+            f"サービス売上:    {money(float(report['service_revenue']))}",
+            f"割引合計:        {money(float(report['discounts']))}",
+            f"最終売上:        {money(float(report['final_revenue']))}",
         ]
         self.report_text.delete("1.0", "end")
         self.report_text.insert("1.0", "\n".join(lines))

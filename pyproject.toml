@@ -1,7 +1,7 @@
 [project]
 name = "billiards-billing-manager"
 version = "0.1.0"
-description = "A Tkinter and SQLite desktop app for billiards table billing."
+description = "ビリヤード店舗向けのTkinter・SQLite会計管理アプリ。"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
