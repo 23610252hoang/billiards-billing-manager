@@ -1,5 +1,7 @@
 # ビリヤード店舗向け会計管理アプリ
 
+[![Python CI](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml/badge.svg)](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml)
+
 ビリヤード店舗の受付・会計業務を想定して作成したデスクトップアプリです。台の利用開始・終了、プレイ時間に応じた料金計算、サービス追加、顧客管理、領収書出力、日次売上確認までをローカル環境で扱えるようにしました。
 
 過去に作成したローカル実行ファイルをもとに、採用選考で確認しやすいようにソースコードを整理し直したポートフォリオ版です。実店舗名、電話番号、実データ、生成済みレポートなどの個人情報・業務情報は含めていません。
@@ -84,7 +86,27 @@ flowchart LR
 - 日次売上をすぐ確認でき、店舗運営の振り返りに使えます。
 - 小規模店舗でも導入しやすいローカル完結型です。
 
-## 実行方法
+## Webデモ
+
+Streamlit版では、ブラウザ上で以下の業務フローを確認できます。
+
+- 台の利用開始
+- サービス追加
+- 割引・支払方法を含む会計
+- 日本語領収書の表示・ダウンロード
+- 顧客・サービス登録
+- 日次売上と売上グラフ
+
+ローカルでWebデモを実行する場合:
+
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
+```
+
+Streamlit Community Cloudへデプロイする場合は、main file pathに `streamlit_app.py` を指定します。
+
+## デスクトップ版の実行方法
 
 必要環境:
 
