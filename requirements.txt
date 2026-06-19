@@ -1,0 +1,6 @@
+Exit code: 0
+Wall time: 1.8 seconds
+Output:
+streamlit>=1.36,<2
+pandas>=2.0,<3
+
