@@ -22,7 +22,6 @@ st.set_page_config(
 )
 
 
-@st.cache_resource
 def get_database(session_key: str) -> Database:
     db_path = Path(tempfile.gettempdir()) / f"billiards_portfolio_{session_key}.db"
     return Database(db_path)
@@ -80,14 +79,14 @@ dashboard_tab, session_tab, master_tab, report_tab = st.tabs(
 with dashboard_tab:
     st.subheader("利用中セッション")
     if active_sessions:
-        st.dataframe(format_session_frame(active_sessions), use_container_width=True, hide_index=True)
+        st.dataframe(format_session_frame(active_sessions), width="stretch", hide_index=True)
     else:
         st.info("現在利用中の台はありません。")
 
     st.subheader("最近の利用履歴")
     recent_sessions = db.recent_sessions(limit=10)
     if recent_sessions:
-        st.dataframe(format_session_frame(recent_sessions), use_container_width=True, hide_index=True)
+        st.dataframe(format_session_frame(recent_sessions), width="stretch", hide_index=True)
     else:
         st.info("利用履歴はまだありません。")
 
@@ -210,7 +209,7 @@ with master_tab:
         if customers:
             customer_frame = rows_to_frame(customers, ["id", "name", "phone", "points", "join_date"])
             customer_frame.columns = ["ID", "氏名", "電話番号", "ポイント", "登録日"]
-            st.dataframe(customer_frame, use_container_width=True, hide_index=True)
+            st.dataframe(customer_frame, width="stretch", hide_index=True)
 
     with service_col:
         st.subheader("サービス登録")
@@ -232,24 +231,24 @@ with master_tab:
         service_frame = rows_to_frame(services, ["id", "name", "price"])
         service_frame.columns = ["ID", "サービス名", "料金"]
         service_frame["料金"] = service_frame["料金"].map(money)
-        st.dataframe(service_frame, use_container_width=True, hide_index=True)
+        st.dataframe(service_frame, width="stretch", hide_index=True)
 
 with report_tab:
     st.subheader("本日の売上")
     report = db.daily_report()
     report_frame = pd.DataFrame(
         [
-            {"項目": "会計数", "値": int(report["session_count"])},
+            {"項目": "会計数", "値": str(int(report["session_count"]))},
             {"項目": "台利用売上", "値": money(float(report["table_revenue"]))},
             {"項目": "サービス売上", "値": money(float(report["service_revenue"]))},
             {"項目": "割引合計", "値": money(float(report["discounts"]))},
             {"項目": "最終売上", "値": money(float(report["final_revenue"]))},
         ]
     )
-    st.dataframe(report_frame, use_container_width=True, hide_index=True)
+    st.dataframe(report_frame, width="stretch", hide_index=True)
 
     completed = [row for row in db.recent_sessions(limit=50) if row["end_time"]]
-    if completed:
+    if len(completed) >= 2:
         chart_frame = pd.DataFrame(
             {
                 "セッション": [f"#{row['id']} 台{row['table_id']}" for row in completed],
@@ -258,7 +257,8 @@ with report_tab:
         ).set_index("セッション")
         st.bar_chart(chart_frame)
     else:
-        st.info("会計完了後に売上グラフが表示されます。")
+        st.info("2件以上の会計完了後に売上グラフが表示されます。")
 
 st.divider()
 st.caption("Portfolio demo by Nguyen Kim Hoang | 実データは使用していません")
+
