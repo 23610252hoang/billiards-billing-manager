@@ -90,7 +90,7 @@ flowchart LR
 
 Streamlit版では、ブラウザ上で以下の業務フローを確認できます。
 
-![Streamlit版の会計画面](images/streamlit-demo.png)
+![Streamlit版の会計画面](images/streamlit-demo.jpg)
 
 - 台の利用開始
 - サービス追加
