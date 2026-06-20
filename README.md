@@ -1,6 +1,7 @@
 # ビリヤード店舗向け会計管理アプリ
 
 [![Python CI](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml/badge.svg)](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [![Deploy to Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=23610252hoang/billiards-billing-manager&branch=main&mainModule=streamlit_app.py)
 
@@ -186,3 +187,8 @@ run_app.py     # ローカル実行用ランチャー
 
 旧版の実行ファイル、実データベース、生成済みレポートは公開していません。このリポジトリには、採用選考で確認していただくためのクリーンなソースコードのみを含めています。
 
+
+
+## ライセンス
+
+本リポジトリのソースコードとドキュメントは [MIT License](LICENSE) です。
