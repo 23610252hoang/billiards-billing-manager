@@ -4,6 +4,8 @@
 
 [![Deploy to Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=23610252hoang/billiards-billing-manager&branch=main&mainModule=streamlit_app.py)
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://23610252hoang-billiards-billing-manager-streamlit-app-jfvswo.streamlit.app/)
+
 ビリヤード店舗の受付・会計業務を想定して作成したデスクトップアプリです。台の利用開始・終了、プレイ時間に応じた料金計算、サービス追加、顧客管理、領収書出力、日次売上確認までをローカル環境で扱えるようにしました。
 
 過去に作成したローカル実行ファイルをもとに、採用選考で確認しやすいようにソースコードを整理し直したポートフォリオ版です。実店舗名、電話番号、実データ、生成済みレポートなどの個人情報・業務情報は含めていません。
