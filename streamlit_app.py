@@ -56,11 +56,12 @@ def format_session_frame(rows) -> pd.DataFrame:
 
 
 db = get_database(get_session_key())
+db.seed_demo_data()
 
 st.title("ビリヤード店舗向け会計管理アプリ")
 st.caption("Python・Streamlit・SQLiteで構築した採用選考向けWebデモ")
 st.info(
-    "このデモのデータは一時領域に保存されます。実店舗名、電話番号、顧客データは含まれていません。",
+    "架空のサンプルデータを表示しています。データは一時領域に保存され、実店舗・実顧客の情報は含まれていません。",
     icon="ℹ️",
 )
 
