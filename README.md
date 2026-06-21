@@ -3,9 +3,8 @@
 [![Python CI](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml/badge.svg)](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-[![Deploy to Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/deploy?repository=23610252hoang/billiards-billing-manager&branch=main&mainModule=streamlit_app.py)
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://23610252hoang-billiards-billing-manager-streamlit-app-jfvswo.streamlit.app/)
+[![Live Demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://23610252hoang-billiards-billing-manager-streamlit-app-jfvswo.streamlit.app/)
 
 ビリヤード店舗の受付・会計業務を想定して作成したデスクトップアプリです。台の利用開始・終了、プレイ時間に応じた料金計算、サービス追加、顧客管理、領収書出力、日次売上確認までをローカル環境で扱えるようにしました。
 
