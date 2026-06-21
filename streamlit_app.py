@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import sys
 import tempfile
 import uuid
@@ -12,7 +13,13 @@ import streamlit as st
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from billiards_manager.database import Database, money, receipt_text
+from billiards_manager import database as database_module
+
+
+database_module = importlib.reload(database_module)
+Database = database_module.Database
+money = database_module.money
+receipt_text = database_module.receipt_text
 
 
 st.set_page_config(
