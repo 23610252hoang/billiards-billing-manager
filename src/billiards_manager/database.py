@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -316,6 +316,94 @@ class Database:
     def list_services(self) -> list[sqlite3.Row]:
         return self.conn.execute("SELECT * FROM services ORDER BY name").fetchall()
 
+    def seed_demo_data(self) -> None:
+        """Populate a fresh temporary database with fictional portfolio data."""
+        existing = self.conn.execute("SELECT COUNT(*) FROM sessions").fetchone()[0]
+        if existing:
+            return
+
+        customer_ids = [
+            self.add_customer("デモ顧客A"),
+            self.add_customer("デモ顧客B"),
+            self.add_customer("デモ顧客C"),
+        ]
+        services = {row["name"]: row for row in self.list_services()}
+        now = datetime.now().replace(microsecond=0)
+
+        def service_item(name: str, quantity: int) -> dict[str, Any]:
+            price = float(services[name]["price"])
+            return {
+                "name": name,
+                "unit_price": price,
+                "quantity": quantity,
+                "total": price * quantity,
+            }
+
+        active_rows = [
+            (2, now - timedelta(hours=2), 2, customer_ids[0], "デモ顧客A", [service_item("ミネラルウォーター", 1)]),
+            (4, now - timedelta(hours=1, minutes=30), 3, customer_ids[1], "デモ顧客B", [service_item("ソフトドリンク", 1), service_item("キュー貸出", 1)]),
+        ]
+        for table_id, started_at, players, customer_id, customer_name, items in active_rows:
+            self.conn.execute(
+                """
+                INSERT INTO sessions(
+                    table_id, start_time, rate_per_hour, num_players,
+                    services, service_fee, customer_id, customer_name, notes
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    table_id,
+                    started_at.isoformat(timespec="seconds"),
+                    float(self.setting("rate_per_hour")),
+                    players,
+                    json.dumps(items, ensure_ascii=False),
+                    sum(item["total"] for item in items),
+                    customer_id,
+                    customer_name,
+                    "架空のデモデータ",
+                ),
+            )
+
+        completed_rows = [
+            (1, now - timedelta(hours=2), now, customer_ids[2], "デモ顧客C", [service_item("ソフトドリンク", 1)], 0, "現金"),
+            (3, now - timedelta(hours=1, minutes=30), now, None, None, [service_item("キュー貸出", 1)], 10000, "カード"),
+            (5, now - timedelta(days=1, hours=3), now - timedelta(days=1, hours=1), None, None, [], 0, "QR決済"),
+        ]
+        rate = float(self.setting("rate_per_hour"))
+        for table_id, started_at, ended_at, customer_id, customer_name, items, discount, payment in completed_rows:
+            duration = (ended_at - started_at).total_seconds()
+            base_fee = duration / 3600 * rate
+            service_fee = sum(item["total"] for item in items)
+            final_total = max(base_fee + service_fee - discount, 0)
+            self.conn.execute(
+                """
+                INSERT INTO sessions(
+                    table_id, start_time, end_time, duration_seconds,
+                    rate_per_hour, num_players, base_fee, services,
+                    service_fee, discount, final_total, payment_method,
+                    customer_id, customer_name, notes
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    table_id,
+                    started_at.isoformat(timespec="seconds"),
+                    ended_at.isoformat(timespec="seconds"),
+                    duration,
+                    rate,
+                    2,
+                    base_fee,
+                    json.dumps(items, ensure_ascii=False),
+                    service_fee,
+                    discount,
+                    final_total,
+                    payment,
+                    customer_id,
+                    customer_name,
+                    "架空のデモデータ",
+                ),
+            )
+        self.conn.commit()
+
     def daily_report(self, date_prefix: str | None = None) -> dict[str, float]:
         date_prefix = date_prefix or datetime.now().date().isoformat()
         row = self.conn.execute(
@@ -367,3 +455,4 @@ def receipt_text(club_name: str, bill: Bill) -> str:
         ]
     )
     return "\n".join(lines)
+
