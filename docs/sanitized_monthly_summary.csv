@@ -1,0 +1,8 @@
+metric,value,note
+transaction_rows,289,One-month exported report; raw report is not public
+count_total,512,Aggregated count column from export
+table_revenue_jpy,557324,Rounded aggregated value
+service_revenue_jpy,237987,Rounded aggregated value
+total_revenue_jpy,795311,Rounded aggregated value
+average_transaction_jpy,2752,Rounded aggregated value
+service_revenue_ratio,0.299,Service revenue / total revenue

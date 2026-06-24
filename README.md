@@ -1,123 +1,142 @@
-# ビリヤード店舗向け会計管理アプリ
+# Billiards Billing Manager
 
 [![Python CI](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml/badge.svg)](https://github.com/23610252hoang/billiards-billing-manager/actions/workflows/python-app.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-
+[![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Live Demo](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://23610252hoang-billiards-billing-manager-streamlit-app-jfvswo.streamlit.app/)
 
-ビリヤード店舗の受付・会計業務を想定して作成したデスクトップアプリです。台の利用開始・終了、プレイ時間に応じた料金計算、サービス追加、顧客管理、領収書出力、日次売上確認までをローカル環境で扱えるようにしました。
+ビリヤード店舗の受付・会計業務を想定して作成した、Python製の料金管理アプリです。  
+旧版は友人のビリヤード店舗で試用してもらい、実際の受付フロー、テーブル管理、サービス料金、レシート出力、月次売上確認の流れを確認しました。
 
-過去に作成したローカル実行ファイルをもとに、採用選考で確認しやすいようにソースコードを整理し直したポートフォリオ版です。実店舗名、電話番号、実データ、生成済みレポートなどの個人情報・業務情報は含めていません。
+このリポジトリは、公開用に個人情報・店舗識別情報・実データベースを除外し、面接・ポートフォリオ用に再構成した版です。  
+実店舗名、住所、電話番号、顧客情報、元のExcel報告書は公開していません。
 
-## 10秒で分かる概要
+## Portfolio Summary
 
 | 項目 | 内容 |
 | --- | --- |
-| 対象ユーザー | 小規模ビリヤード店舗の受付・会計担当者 |
-| 解決する課題 | 利用時間・追加注文・前払い・割引を手作業で管理する負担とミス |
-| 主な機能 | 台管理、自動料金計算、サービス追加、顧客管理、領収書、日次売上 |
-| 技術 | Python, Tkinter, SQLite |
-| 実行環境 | Windows / ローカル完結 |
+| 想定ユーザー | 小規模ビリヤード店舗の受付・会計担当者 |
+| 解決したい課題 | テーブル利用時間、サービス注文、割引、会計、売上確認を手作業で管理する負担 |
+| 旧版の検証 | 友人の店舗で実際の業務フローに近い形で試用 |
+| 公開版 | StreamlitでWebデモ化し、個人情報を含まないデモデータで再構成 |
+| 使用技術 | Python, Tkinter, Streamlit, SQLite, pandas, GitHub Actions |
+| 面接で説明できる点 | 業務理解、DB設計、料金計算、レシート出力、売上集計、公開時の情報保護 |
 
-## 開発背景・完成までの流れ
+## Evidence From Previous Local Version
 
-1. 店舗業務を「利用開始」「利用中」「会計」「売上確認」に分解しました。
-2. セッション、顧客、サービス、設定をSQLiteのテーブルとして設計しました。
-3. スタッフが日常的に使う操作をTkinterのタブUIにまとめました。
-4. 利用時間・単価・追加サービス・割引・前払いから最終金額を計算するロジックを実装しました。
-5. 領収書出力、日次集計、スモークテストを追加しました。
-6. GitHub公開用に、実店舗データと個人情報を除外しました。
+旧版アプリの画面写真と、1か月分の売上報告をもとに、公開可能な範囲でケーススタディ化しました。  
+以下の画像は、店舗名・住所・電話番号・顧客情報をマスクしたものです。
 
-## 主な機能
+![Sanitized monthly report](images/monthly-report-summary-safe.png)
 
-- 台ごとのセッション開始・終了管理
-- 利用時間、時間単価、人数、前払い、割引をもとにした自動会計
-- ドリンクなどの追加サービス登録と料金加算
-- 顧客登録とポイント管理
-- 領収書のテキスト出力
+| 1か月分の匿名化集計 | 値 |
+| --- | ---: |
+| 取引行数 | 289 |
+| 集計カウント列 | 512 |
+| テーブル売上 | JPY 557,324 |
+| サービス売上 | JPY 237,987 |
+| 合計売上 | JPY 795,311 |
+| 平均取引額 | JPY 2,752 |
+| サービス売上比率 | 29.9% |
+
+詳しい説明は [docs/CASE_STUDY_JA.md](docs/CASE_STUDY_JA.md) にまとめています。
+
+## Legacy Screenshots
+
+| 設定画面 | 仮会計 | レシート | サービス管理 |
+| --- | --- | --- | --- |
+| ![Settings](images/legacy-settings-safe.jpg) | ![Temporary bill](images/legacy-temp-bill-safe.jpg) | ![Receipt](images/legacy-receipt-safe.jpg) | ![Menu](images/legacy-menu-safe.jpg) |
+
+## Main Features
+
+- テーブルごとの利用開始・利用終了管理
+- 利用時間と時間単価にもとづく料金計算
+- ドリンクなどのサービス追加
+- 割引・前払いを含む会計処理
+- 顧客情報とポイント管理
+- テキスト形式のレシート出力
 - SQLiteに保存した履歴から日次売上を集計
-- ローカル完結型のデータ保存
+- Streamlit版によるWebデモ表示
+- GitHub Actionsによるスモークテスト
 
-## システム構成
+## Business Value
+
+このアプリの価値は、単に会計画面を作ることではなく、店舗スタッフが日常的に行う作業を整理し、ミスを減らすことにあります。
+
+- 会計金額の手計算ミスを減らす
+- どのテーブルが利用中かすぐ確認できる
+- サービス注文とテーブル料金をまとめて会計できる
+- レシート形式で会計内容を残せる
+- 1日の売上や1か月分の売上を振り返れる
+- 将来的に混雑時間帯、客単価、サービス売上比率の分析に発展できる
+
+実際の1か月分の匿名化集計では、サービス売上が全体の約29.9%を占めていました。  
+このような数字を見ることで、単なる会計アプリから、店舗運営の改善に使えるデータ基盤へ発展できる可能性があると考えました。
+
+## System Design
 
 ```mermaid
 flowchart LR
-    A[店舗スタッフ] --> B[Tkinter UI]
-    B --> C[セッション管理]
-    B --> D[顧客・サービス管理]
-    C --> E[料金計算ロジック]
+    A[Store Staff] --> B[Tkinter Desktop UI]
+    B --> C[Session Management]
+    B --> D[Service / Customer Management]
+    C --> E[Billing Logic]
     D --> E
     E --> F[(SQLite)]
-    E --> G[領収書出力]
-    F --> H[日次売上レポート]
+    E --> G[Text Receipt]
+    F --> H[Daily / Monthly Report]
+    H --> I[Portfolio Streamlit Demo]
 ```
 
-## データ設計
+## Data Design
 
-| テーブル | 役割 |
+| Table | Role |
 | --- | --- |
-| `sessions` | 台番号、開始・終了時刻、料金、サービス、支払情報を保存 |
-| `customers` | 顧客名、電話番号、ポイントを管理 |
-| `services` | ドリンク・キュー貸出などの名称と料金を管理 |
-| `settings` | 台数、時間単価、ポイント基準を管理 |
-| `reservations` | 予約情報を保存するための拡張用テーブル |
-| `inventory` / `expenses` | 在庫・経費管理に向けた拡張用テーブル |
+| `sessions` | table number, start/end time, play time, service amount, discount, final amount |
+| `customers` | customer name and points for local shop operation |
+| `services` | drink/snack/service menu and price |
+| `settings` | table count, hourly rate, currency, night surcharge settings |
+| `reservations` | extension point for reservations |
+| `inventory` / `expenses` | extension point for stock and expense management |
 
-## 使用技術
+## Source Code Explanation
 
-- Python 3.10+
-- Tkinter: デスクトップGUI
-- SQLite: ローカルデータベース
-- pathlib / dataclasses / json / datetime: 標準ライブラリによるデータ処理
-- Git / GitHub: バージョン管理・成果物提出
+面接では、以下の流れでソース説明できます。
 
-## 課題と解決
+1. `src/billiards_manager/app.py`  
+   Tkinter版の画面、テーブル操作、会計操作を担当します。
 
-| 課題 | 解決方法 | 設計上の意図 |
-| --- | --- | --- |
-| 同じ台で複数セッションが開始される | 開始前に利用中セッションをDBで確認 | 二重登録と二重会計を防ぐ |
-| 料金計算条件が複数ある | 基本料金、サービス、割引、前払いを分けて計算 | 計算根拠を追いやすくする |
-| 会計履歴を残したい | セッション終了時にDB更新と領収書出力を行う | 後から確認・集計できる |
-| 実店舗データを公開できない | DB、領収書、実行ファイルをGit管理対象外にする | 個人情報・業務情報を保護 |
-| 外部サーバーを用意できない | TkinterとSQLiteでローカル完結 | 小規模店舗で導入しやすくする |
+2. `src/billiards_manager/database.py`  
+   SQLiteの初期化、セッション保存、サービス保存、売上集計を担当します。
 
-## 業務的な価値
+3. `streamlit_app.py`  
+   GitHub上で見てもらいやすいように、公開用Webデモとして再構成した画面です。
 
-- 手計算による会計ミスを減らせます。
-- 台ごとの利用状況を一覧で確認できます。
-- 領収書出力により会計履歴を残せます。
-- 日次売上をすぐ確認でき、店舗運営の振り返りに使えます。
-- 小規模店舗でも導入しやすいローカル完結型です。
+4. `tests/smoke_test.py`  
+   DB初期化、会計計算、デモデータ作成、日次集計が動くことを確認します。
 
-## Webデモ
+## Web Demo
 
 Streamlit版では、ブラウザ上で以下の業務フローを確認できます。
 
-![Streamlit版の会計画面](images/streamlit-demo.jpg)
+![Streamlit demo](images/streamlit-demo.jpg)
 
-- 台の利用開始
+- 利用中テーブルの確認
+- テーブル利用開始
 - サービス追加
-- 割引・支払方法を含む会計
-- 日本語領収書の表示・ダウンロード
-- 顧客・サービス登録
-- 日次売上と売上グラフ
+- 割引を含む会計
+- 本日の売上確認
+- 履歴テーブルの確認
 
-ローカルでWebデモを実行する場合:
+Run locally:
 
 ```bash
 pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-Streamlit Community Cloudへデプロイする場合は、main file pathに `streamlit_app.py` を指定します。
+## Desktop Version
 
-## デスクトップ版の実行方法
-
-必要環境:
-
-- Python 3.10以上
-- Tkinterが利用できるデスクトップ環境
+旧版のローカルアプリは、TkinterとSQLiteで構成しています。
 
 ```bash
 git clone https://github.com/23610252hoang/billiards-billing-manager.git
@@ -125,14 +144,14 @@ cd billiards-billing-manager
 python run_app.py
 ```
 
-実行すると、以下のローカルデータが自動作成されます。
+実行すると、ローカルに以下の生成ファイルが作成されます。
 
 - `data/billiards_app.db`
 - `reports/`
 
-これらの生成ファイルはGit管理対象外にしています。
+これらは店舗データや生成レポートを含む可能性があるため、Git管理対象外にしています。
 
-## 動作確認
+## Test
 
 ```bash
 python -m compileall run_app.py src tests
@@ -143,51 +162,34 @@ python -c "import sys, runpy; sys.path.insert(0, 'src'); runpy.run_path('tests/s
 
 - 顧客とサービスを登録できること
 - セッションを開始できること
-- サービスを会計へ追加できること
+- サービス料金を会計に追加できること
 - 割引を含む最終金額を計算できること
-- 日本語領収書を生成できること
+- 日本語レシートを生成できること
+- デモデータと日次売上集計が動くこと
 
-## ディレクトリ構成
+## What I Learned
 
-```text
-src/billiards_manager/
-  app.py       # Tkinter UIと業務操作
-  database.py  # SQLiteスキーマとデータアクセス
-  __main__.py  # アプリのエントリーポイント
-tests/
-  smoke_test.py
-run_app.py     # ローカル実行用ランチャー
-```
+- 実際の業務フローを画面とDB設計に落とし込むこと
+- 料金計算の根拠をコード上で分かりやすく分けること
+- ローカルアプリとWebデモでは必要な設計が異なること
+- 公開ポートフォリオでは、実データを見せるよりも、匿名化・集計化して説明することが重要であること
+- アプリ開発とデータ分析を組み合わせると、売上改善や運営改善につなげられること
 
-## 現在の制約
+## Current Limitations
 
-- 単一PC・単一店舗での利用を想定しています。
-- 同時に複数端末から更新する構成ではありません。
-- PDF領収書やプリンター連携は未実装です。
-- 公開デモは一時データを使用し、永続保存・ユーザー認証には対応していません。
+- 公開版はデモ用途であり、実店舗データは保存していません。
+- 複数端末から同時に使うためのAPI設計は未実装です。
+- ログイン、権限管理、バックアップ、監査ログは今後の改善項目です。
+- レシートプリンター連携は未実装です。
 
-## 今後の改善
+## Interview Talking Points
 
-- 単体テストとUIテストの追加
-- CSV/PDFレポート出力
-- 在庫・予約・経費画面の実装
-- 複数店舗・複数端末に対応するAPI化
-- ロール別権限とログイン機能
-- バックアップとデータ移行機能
+- 旧版は実店舗で試用してもらい、公開版では情報保護のために再構成したこと
+- 料金計算、サービス追加、売上集計という業務の流れをコードに落とし込んだこと
+- 1か月分の匿名化集計から、サービス売上比率など運営改善につながる指標を見られること
+- 実務で使うなら、ログイン、権限管理、クラウドDB、バックアップ、レシートプリンター連携を追加したいこと
 
-## 面接で説明できるポイント
+## Privacy Notice
 
-- 店舗業務をどのようにテーブル設計と画面操作へ変換したか
-- ローカルアプリとしてTkinter・SQLiteを選んだ理由
-- 二重セッションや個人情報公開をどう防いだか
-- 現在の制約を踏まえ、Web/API構成へどう拡張するか
-
-## 補足
-
-旧版の実行ファイル、実データベース、生成済みレポートは公開していません。このリポジトリには、採用選考で確認していただくためのクリーンなソースコードのみを含めています。
-
-
-
-## ライセンス
-
-本リポジトリのソースコードとドキュメントは [MIT License](LICENSE) です。
+このリポジトリには、実店舗の元データベース、元Excel報告書、住所、電話番号、顧客情報は含めていません。  
+掲載している画像と数値は、面接・ポートフォリオ説明用に匿名化・集計化したものです。
